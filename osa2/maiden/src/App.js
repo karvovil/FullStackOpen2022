@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const apiKey= "efe70099c6f470afe64760b376f00078"
+const apiKey= "efe70099c6f470afe64760b376f00078"//hide apikey pls
 const Content = ({countries, filter, buttonHandler}) => {
   let filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase() ))
 
