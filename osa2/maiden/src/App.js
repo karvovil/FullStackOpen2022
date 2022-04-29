@@ -36,12 +36,12 @@ const Country = ({country}) => {
     </div>
   )
 }
-
+const api_key = process.env.REACT_APP_API_KEY
 const Weather = ({lat, lon}) => {
   const [weather, setWeather] = useState(null)
   useEffect(() => {
     axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${"efe70099c6f470afe64760b376f00078"}`)
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${api_key}`)
       .then(response => {
         console.log("weather fullfilled");
         console.log(response);

@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './persons'
 
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, deleteHandler }) => {
   let filteredPersons = persons.filter(person => person.name.includes(filter))
-  return( filteredPersons.map(person => <Person key={person.name} person = {person} /> ) )
+  return( filteredPersons.map(person => <Person key={person.name} person={person} deleteHandler={deleteHandler}/> ) )
 }
-const Person = ({person}) => <li key={person.name}>{person.name}{person.number}</li>
-
+const Person = ({person, deleteHandler}) => {
+  return (
+    <li key={person.name}>{person.name} {person.number} 
+      <DeleteButton deleteHandler={() => deleteHandler(person.id)} />
+    </li>
+  )
+}
+const DeleteButton =({deleteHandler}) => <button onClick={()=>deleteHandler()}>delete</button>
 const Filter = ({filter, handleFilterChange}) => {
   return(
     <div>
@@ -31,6 +37,7 @@ const PersonForm = ({newName, newNumber, handleNameChange, handleNumberChange, a
   )
 }
 
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('Name')
@@ -39,14 +46,14 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personService
+      .getAll()
+      .then(serverPersons => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(serverPersons)
       })
   }, [])
-  console.log('render', persons.length, 'notes')
+  console.log('render', persons.length, 'persons')
 
   const addName = (event) => {
     event.preventDefault()
@@ -56,12 +63,27 @@ const App = () => {
     }
     if(persons.map(person => person.name).includes(nameObject.name)){
       window.alert(`${nameObject.name} is already in book`)
-    }else{
-      setPersons(persons.concat(nameObject))
-      setNewName("")
-      setNewNumber("")
+    }else{  
+      personService
+      .create(nameObject)
+      .then(addedPerson => {
+        console.log(addedPerson);
+        setPersons(persons.concat(addedPerson))
+        setNewName("")
+        setNewNumber("")
+      })
+    }
   }
-}
+  const deleteName = (id) => {
+    if (window.confirm("Delete??")) {
+      personService
+      .deletePerson(id)
+      .then(stat => {
+        console.log(stat)
+        setPersons(persons.filter(person => person.id !== id))
+      })
+    }
+  }
   const handleNameChange = (event) => {
     console.log(event.target.value)
     setNewName(event.target.value)
@@ -81,10 +103,8 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addName={addName} />
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={filter}/>
+      <Persons persons={persons} filter={filter} deleteHandler={deleteName}/>
     </div>
   )
-
 }
-
 export default App
