@@ -36,6 +36,18 @@ const PersonForm = ({newName, newNumber, handleNameChange, handleNumberChange, a
     </form>
   )
 }
+const Notification = ({ message, waitAndClear, className }) => {
+
+  if (message === null) {
+    return null
+  }
+  waitAndClear()
+  return (
+    <div className={className}>
+      {message}
+    </div>
+  )
+}
 
 
 const App = () => {
@@ -43,7 +55,8 @@ const App = () => {
   const [newName, setNewName] = useState('Name')
   const [newNumber, setNewNumber] = useState('default number')
   const [filter, setFilter] = useState('')
-
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   useEffect(() => {
     console.log('effect')
     personService
@@ -57,21 +70,37 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    const nameObject = {
+    const newPerson = {
       name : newName,
       number : newNumber
     }
-    if(persons.map(person => person.name).includes(nameObject.name)){
-      window.alert(`${nameObject.name} is already in book`)
+    if(persons.map(person => person.name).includes(newPerson.name)){
+      if( window.confirm(`${newPerson.name} is already in book, replace number?`) ){
+        const id = persons.find(prsn => prsn.name === newPerson.name).id
+        console.log(id);
+        personService
+          .put(id, newPerson)
+            .then(returnedPerson => {
+            setPersons(persons.map(person => person.id === id ? returnedPerson : person))
+            setNewName("")
+            setNewNumber("") 
+            setNotificationMessage(`Changed number of ${returnedPerson.name}`)
+          })
+          .catch(error => {
+            setErrorMessage(`Failure editing ${newPerson.name}`)
+          })
+      }
     }else{  
       personService
-      .create(nameObject)
+      .create(newPerson)
       .then(addedPerson => {
         console.log(addedPerson);
         setPersons(persons.concat(addedPerson))
         setNewName("")
         setNewNumber("")
+        setNotificationMessage(`Added ${addedPerson.name}`)
       })
+
     }
   }
   const deleteName = (id) => {
@@ -81,9 +110,12 @@ const App = () => {
       .then(stat => {
         console.log(stat)
         setPersons(persons.filter(person => person.id !== id))
+        setNotificationMessage(`Deleted ${persons.find(prsn=>prsn.id === id).name}`)
       })
     }
   }
+  const handleClearNotify = () => {setTimeout(()=>setNotificationMessage(null), 2000)}
+  const handleClearError = () => {setTimeout(()=>setErrorMessage(null), 2000)}
   const handleNameChange = (event) => {
     console.log(event.target.value)
     setNewName(event.target.value)
@@ -99,6 +131,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} waitAndClear={handleClearNotify} className={"notification"}/>
+      <Notification message={errorMessage} waitAndClear={handleClearError} className={"error"}/>
       <Filter value={filter} handleFilterChange={handleFilterChange}/>
       <h3>Add a new</h3>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addName={addName} />
