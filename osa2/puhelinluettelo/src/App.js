@@ -49,7 +49,6 @@ const Notification = ({ message, waitAndClear, className }) => {
   )
 }
 
-
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('Name')
@@ -100,7 +99,9 @@ const App = () => {
         setNewNumber("")
         setNotificationMessage(`Added ${addedPerson.name}`)
       })
-
+      .catch(error => {
+        setErrorMessage(`Failure adding ${newPerson.name}. ${error.response.data.error}`)
+      })
     }
   }
   const deleteName = (id) => {
