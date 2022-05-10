@@ -86,7 +86,7 @@ const App = () => {
             setNotificationMessage(`Changed number of ${returnedPerson.name}`)
           })
           .catch(error => {
-            setErrorMessage(`Failure editing ${newPerson.name}`)
+            setErrorMessage(`Failure editing ${newPerson.name}. ${error.response.data.error}`)
           })
       }
     }else{  
