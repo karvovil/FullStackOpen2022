@@ -120,7 +120,6 @@ test('a specific blog can be modified', async () => {
     .send(newBlog)
 
   const blogsAtEnd = await helper.blogsInDb()
-  logger.info(blogsAtEnd)
   const urls = blogsAtEnd.map(blog => blog.url)
 
   expect(urls).toContain(newBlog.url)
