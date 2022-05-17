@@ -10,9 +10,7 @@ const helper = require('./test_helper')
 describe('when no auth token is sent with request', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
-    await User.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
-    await User.insertMany(helper.initialUsers)
   })
 
   test('blogs are returned as json', async () => {
