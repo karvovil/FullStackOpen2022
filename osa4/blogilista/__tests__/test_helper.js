@@ -76,6 +76,5 @@ const usersInDb = async () => {
 
 module.exports = {
   initialBlogs: initialBlogs,
-  initialUsers: initialUsers,
   nonExistingId, blogsInDb, usersInDb,
 }

@@ -10,7 +10,6 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/',tokenExtractor, userExtractor, async (request, response) => {
 
-  logger.info(request.user)
   const user = request.user
   const blog = new Blog({
     title: request.body.title,
@@ -27,7 +26,6 @@ blogsRouter.post('/',tokenExtractor, userExtractor, async (request, response) =>
       blog.likes = 0
 
     const savedBlog = await blog.save()
-    logger.info(savedBlog.id)
     user.blogs = user.blogs.concat(savedBlog.id)
     await user.save()
 
@@ -43,8 +41,9 @@ blogsRouter.delete('/:id',tokenExtractor, userExtractor, async (request, respons
 
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
+  }else{
+    response.status(401).json({ error: 'Unauthorized' })
   }
-  response.status(401).json({ error: 'Unauthorized' })
 })
 
 blogsRouter.put('/:id', tokenExtractor, userExtractor, async (request, response) => {
