@@ -112,6 +112,7 @@ describe('when no auth token is sent with request', () => {
   })
 })
 
+let token
 describe('when proper auth token is sent with request', () => {
 
   beforeEach(async () => {
@@ -122,6 +123,13 @@ describe('when proper auth token is sent with request', () => {
     await api
       .post('/api/users')
       .send({ username: 'luser', name: 'Ulle Dulle', password: 'salas' })
+
+      const response = await api
+      .post('/api/login')
+      .send({ username: 'luser', password: 'salas' })
+      .expect(200)
+
+      token = response.body.token
   })
 
   test('a valid blog can be added ', async () => {
@@ -130,14 +138,10 @@ describe('when proper auth token is sent with request', () => {
       title: 'async/await simplifies making async calls',
       url: 'www.lol.pl',
     }
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'luser', password: 'salas' })
-      .expect(200)
 
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -155,14 +159,10 @@ describe('when proper auth token is sent with request', () => {
       title: 'async/await simplifies making async calls',
       url: 'www.lol.pl',
     }
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'luser', password: 'salas' })
-      .expect(200)
 
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(201)
 
@@ -173,10 +173,6 @@ describe('when proper auth token is sent with request', () => {
   })
 
   test('posting blog with no title or url returns 400 Bad request', async () => {
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'luser', password: 'salas' })
-      .expect(200)
 
     const newBlog = {
       title: 'async/await simplifies making async calls',
@@ -188,29 +184,26 @@ describe('when proper auth token is sent with request', () => {
     }
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(400)
 
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog2)
       .expect(400)
   })
 
   test('a blog can be deleted', async () => {
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'luser', password: 'salas' })
-      .expect(200)
+
     const newBlog = {
       title: 'async/await simplifies making async calls',
       url: 'www.lol.pl',
     }
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -221,7 +214,7 @@ describe('when proper auth token is sent with request', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -233,17 +226,14 @@ describe('when proper auth token is sent with request', () => {
   })
 
   test('a specific blog can be modified', async () => {
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'luser', password: 'salas' })
-      .expect(200)
+
     const newBlog = {
       title: 'async/await simplifies making async calls',
       url: 'www.lol.pl',
     }
     await api
       .post('/api/blogs')
-      .set('Authorization', `bearer ${response.body.token}`)
+      .set('Authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -253,7 +243,7 @@ describe('when proper auth token is sent with request', () => {
     const blogToMod = blogsAtStart.find( blog => blog.url === 'www.lol.pl')
     const oldUrl = blogToMod.url
 
-    const newBlog2 = {
+    const blogWithMods = {
       author: blogToMod.author,
       title: blogToMod.title,
       url: 'New and unique url that cant be found from existing DB',
@@ -261,13 +251,13 @@ describe('when proper auth token is sent with request', () => {
     }
     await api
       .put(`/api/blogs/${blogToMod.id}`)
-      .set('Authorization', `bearer ${response.body.token}`)
-      .send(newBlog2)
+      .set('Authorization', `bearer ${token}`)
+      .send(blogWithMods)
 
     const blogsAtEnd = await helper.blogsInDb()
     const urls = blogsAtEnd.map(blog => blog.url)
 
-    expect(urls).toContain(newBlog2.url)
+    expect(urls).toContain(blogWithMods.url)
     expect(urls).not.toContain(oldUrl)
   })
 })
