@@ -19,9 +19,10 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then(blogs => {
+      const sortedBlogs = blogs.sort((a,b) => b.likes-a.likes)
+      setBlogs( sortedBlogs )
+    })
   }, [])
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -57,7 +58,7 @@ const App = () => {
 
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
-    const createdBlog = await blogService.postNew(user.token, newBlog)
+    const createdBlog = await blogService.postNew(newBlog)
 
     setErrorMessage(`${createdBlog.title} created`)
     setErrorType('notification')

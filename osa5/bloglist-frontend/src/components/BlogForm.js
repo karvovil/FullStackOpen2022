@@ -12,6 +12,7 @@ const LoginForm = ({ handleCreateBlog }) => {
       title: title,
       author: author,
       url: url,
+      likes: 0,
     }
     handleCreateBlog(blog)
     setTitle('')

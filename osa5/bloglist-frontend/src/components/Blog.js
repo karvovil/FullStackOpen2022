@@ -11,7 +11,7 @@ const Blog = ({ blog }) => {
   }
 
   const [showBlogInfo, setShowBlogInfo] = useState(false)
-  const [likes, setLikes] = useState( blog.likes ? blog.likes : 0)
+  const [likes, setLikes] = useState( blog.likes)
 
   const switchVisibility = () => {
     setShowBlogInfo(!showBlogInfo)
