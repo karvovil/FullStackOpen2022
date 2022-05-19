@@ -21,5 +21,10 @@ const update = (updatedBlog) => {
   console.log(request)
   return request.then(response => response.data)
 }
+const deleteBlog = (id) => {
 
-export default { getAll, postNew, update }
+  const request = axios.delete(`${baseUrl}/${id}`, { headers: { 'Authorization': `bearer ${token}` } })
+  return request.then(response => response.data)
+}
+
+export default { getAll, postNew, update, deleteBlog }

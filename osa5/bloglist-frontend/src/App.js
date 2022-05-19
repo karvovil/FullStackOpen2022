@@ -19,18 +19,19 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
-      const sortedBlogs = blogs.sort((a,b) => b.likes-a.likes)
-      setBlogs( sortedBlogs )
-    })
-  }, [])
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const currentUser = JSON.parse(loggedUserJSON)
       setUser(currentUser)
     }
   }, [])
+  useEffect(() => {
+    blogService.getAll().then(blogs => {
+      const sortedBlogs = blogs.sort((a,b) => b.likes-a.likes)
+      setBlogs( sortedBlogs )
+    })
+  }, [])
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -106,7 +107,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={errorMessage} type={errorType}/>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blogToShow={blog} />
       )}
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm
