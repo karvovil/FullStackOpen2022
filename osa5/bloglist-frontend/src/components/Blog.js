@@ -1,7 +1,7 @@
 import blogService from '../services/blogs'
 import { useState } from 'react'
 
-const Blog = ({ blogToShow }) => {
+const Blog = ({ blogToShow, handler }) => {
 
   const showBlogStyle = {
     paddingTop: 0,
@@ -15,8 +15,11 @@ const Blog = ({ blogToShow }) => {
   const [showBlogInfo, setShowBlogInfo] = useState(false)
 
   const currentUser = JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
-  const isOwner = JSON.stringify(currentUser.username) === JSON.stringify(blog.user.username)
-  const deleteButtonStyle = { display: isOwner ? '' : 'none' }
+  let deleteButtonStyle
+  if(currentUser){
+    const isOwner = JSON.stringify(currentUser.username) === JSON.stringify(blog.user.username)
+    deleteButtonStyle = { display: isOwner ? '' : 'none' }
+  }
 
   const switchVisibility = () => {
     setShowBlogInfo(!showBlogInfo)
@@ -35,17 +38,17 @@ const Blog = ({ blogToShow }) => {
 
   if(showBlogInfo){
     return(
-      <div style={blogStyle}>
+      <div className="blogMore" style={blogStyle}>
         <div>{blog.title} {blog.author} <button onClick={switchVisibility}>Hide</button></div>
         <div>{blog.url}</div>
         <div>likes: {blog.likes} <button onClick={likesPlusPlus}>Like</button> </div>
         <div>{blog.user.name}</div>
-        <button style={deleteButtonStyle} onClick={handleDelete}>Remove</button>
+        <button className="showButton" style={deleteButtonStyle} onClick={handleDelete}>Remove</button>
       </div>
     )
   }else{
     return(
-      <div>
+      <div className="blogLess">
         {blog.title} {blog.author}
         <button onClick={switchVisibility}>Show</button>
       </div>)
