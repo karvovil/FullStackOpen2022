@@ -23,6 +23,7 @@ const App = () => {
     if (loggedUserJSON) {
       const currentUser = JSON.parse(loggedUserJSON)
       setUser(currentUser)
+      blogService.setToken(currentUser.token)
     }
   }, [])
   useEffect(() => {
@@ -31,7 +32,6 @@ const App = () => {
       setBlogs( sortedBlogs )
     })
   }, [])
-
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -68,7 +68,18 @@ const App = () => {
     }, 5000)
     setBlogs(blogs.concat(createdBlog))
   }
-
+  const handleLike = async (id) => {
+    const blogToModify = blogs.find( blog => blog.id === id )
+    const modifiedBlog = { ...blogToModify, user: blogToModify.user.id, likes: blogToModify.likes+1 }
+    const updatedBlog = await blogService.update(modifiedBlog)
+    setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
+  }
+  const handleRemove = async (id) => {
+    if(window.confirm('Sure?')){
+      await blogService.deleteBlog(id)
+      setBlogs( blogs.filter(blog => blog.id !== id))
+    }
+  }
   if (user === null) {
     return (
       <div>
@@ -107,7 +118,12 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={errorMessage} type={errorType}/>
       {blogs.map(blog =>
-        <Blog key={blog.id} blogToShow={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          removeHandler = {() => handleRemove(blog.id)}
+          likeHandler = { () => handleLike(blog.id)}
+        />
       )}
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm
