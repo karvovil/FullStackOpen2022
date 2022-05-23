@@ -12,7 +12,7 @@ test('renders title and author but nothing else', () => {
     user: '2'
   }
 
-  const { container } = render(<Blog blogToShow={blog} />)
+  const { container } = render(<Blog blog={blog} />)
   screen.debug()
   const div1 = container.querySelector('.blogLess')
   const div2 = container.querySelector('.blogMore')
@@ -30,7 +30,7 @@ test('clicking the show button shows url and likes', async () => {
     url: 'www.url.com',
     user: '2'
   }
-  const { container } = render(<Blog blogToShow={blog} />)
+  const { container } = render(<Blog blog={blog} />)
   screen.debug()
   const user = userEvent.setup()
   const showButton = screen.getByText('Show')
@@ -46,7 +46,7 @@ test('clicking like button fires handler twice', async () => {
     user: '2'
   }
   const likeMockHandler = jest.fn()
-  render(<Blog blogToShow={blog} handler={likeMockHandler}/>)
+  render(<Blog blog={blog} likeHandler={likeMockHandler}/>)
   screen.debug()
   const user = userEvent.setup()
   const showButton = screen.getByText('Show')
@@ -54,6 +54,6 @@ test('clicking like button fires handler twice', async () => {
 
   const likeButton = screen.getByText('Like')
   await user.click(likeButton)
-  //await user.click(likeButton)
+  await user.click(likeButton)
   expect(likeMockHandler.mock.calls).toHaveLength(2)
 })
