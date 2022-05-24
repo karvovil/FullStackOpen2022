@@ -24,6 +24,8 @@ const App = () => {
       const currentUser = JSON.parse(loggedUserJSON)
       setUser(currentUser)
       blogService.setToken(currentUser.token)
+      console.log('token retrieved from local: '+currentUser.token)
+
     }
   }, [])
   useEffect(() => {
@@ -37,14 +39,15 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
+      const loggedInUser = await loginService.login({
         username, password,
       })
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
+        'loggedBlogappUser', JSON.stringify(loggedInUser)
       )
+      setUser(loggedInUser)
+      blogService.setToken(loggedInUser.token)
 
-      setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -115,7 +118,7 @@ const App = () => {
     <div>
       <p>
         {user.name} logged in
-        <button onClick={handleLogout}>Log Out</button>
+        <button id = "logout-button" onClick={handleLogout}>Log Out</button>
       </p>
       <h2>blogs</h2>
       <Notification message={errorMessage} type={errorType}/>
@@ -127,11 +130,9 @@ const App = () => {
           likeHandler = { () => handleLike(blog.id)}
         />
       )}
-      <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+      <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm
-          handleCreateBlog={handleCreateBlog}
-          token={user.token}
-        />
+          handleCreateBlog={handleCreateBlog}/>
       </Togglable>
 
     </div>
