@@ -24,8 +24,6 @@ const App = () => {
       const currentUser = JSON.parse(loggedUserJSON)
       setUser(currentUser)
       blogService.setToken(currentUser.token)
-      console.log('token retrieved from local: '+currentUser.token)
-
     }
   }, [])
   useEffect(() => {

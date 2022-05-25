@@ -13,7 +13,6 @@ const Blog = ({ blog, likeHandler, removeHandler }) => {
 
   const currentUser = JSON.parse(window.localStorage.getItem('loggedBlogappUser'))
   let deleteButtonStyle
-  //console.log(blog.user)
   if(currentUser){
     const isOwner = JSON.stringify(currentUser.username) === JSON.stringify(blog.user.username)
     deleteButtonStyle = { display: isOwner ? '' : 'none' }
