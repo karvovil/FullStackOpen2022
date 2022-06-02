@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
+import { notify } from '../reducers/notificationReducer'
 
 const anecdotesAtStart = []
 const anecdoteReducer = (state = initialState, action) => {
@@ -13,7 +14,7 @@ const anecdoteReducer = (state = initialState, action) => {
         ...anecdoteToChange, 
         votes : anecdoteToChange.votes +1 
       }
-      return  inOrder( state.map( a => id === a.id ? changedAnecdote : a ) )
+      return  state.map( a => id === a.id ? changedAnecdote : a )
     case 'NEW_ANECDOTE':
       return [...state, action.data]
     case 'SET_ALL_ANECDOTES':
@@ -31,7 +32,6 @@ const asObject = (anecdote) => {
     votes: 0
   }
 }
-const inOrder = state => state.sort((a,b) => b.votes-a.votes)
 
 const initialState = anecdotesAtStart.map(asObject)
 
@@ -53,6 +53,29 @@ export const setAnecdotes = (anecdotes) => {
   return {
     type: 'SET_ALL_ANECDOTES',
     data: anecdotes
+  }
+}
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+export const saveNewAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch(createAnecdote(newAnecdote))
+    dispatch(notify(`you created '${content}'`, 5))
+
+  }
+}
+export const voteAnecdote = anecdote => {
+  return async dispatch => {
+    const votedAnecdote = {...anecdote, votes: anecdote.votes + 1}
+    const updatedAnecdote = await anecdoteService.update(votedAnecdote)
+    dispatch(addVote(updatedAnecdote.id))
+    dispatch(notify(`you voted '${anecdote.content}'`, 5))
+
   }
 }
 export default anecdoteReducer
