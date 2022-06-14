@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvbCIsImlkIjoiNjI4Yjk1MmE1ZjdhM2Q4NWU4NzBjNzljIiwiaWF0IjoxNjUzMzE1ODE5fQ.R8r-E41zDRm4B-FnjANqFuRal45iWsKBBe6bhhaqqNU
+
+{
+  "title": "lsdfsdfsdfsdfh",
+  "author": "rsrtdrtdrtdrg",
+  "url": "www.google.fi",
+  "likes": 123
+}
