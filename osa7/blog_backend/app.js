@@ -13,7 +13,8 @@ const logger = require('./utils/logger')
 
 logger.info('connecting to', config.MONGODB_URI)
 
-mongoose.connect(config.MONGODB_URI)
+mongoose
+  .connect(config.MONGODB_URI)
   .then(() => {
     logger.info('connected to MongoDB')
   })
@@ -28,11 +29,11 @@ app.use(express.json())
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
-console.log('node env: '+process.env.NODE_ENV)
+console.log('node env: ' + process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
   app.use('/api/testing', testingRouter)
-  console.log('using testing router');
+  console.log('using testing router')
 }
 
 app.use(errorHandler)

@@ -10,9 +10,7 @@ describe('<Togglable />', () => {
   beforeEach(() => {
     container = render(
       <Togglable buttonLabel="show...">
-        <div className="testDiv" >
-          togglable content
-        </div>
+        <div className="testDiv">togglable content</div>
       </Togglable>
     ).container
   })

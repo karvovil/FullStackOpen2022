@@ -9,7 +9,7 @@ test('renders title and author but nothing else', () => {
     title: 'Component testing is done with react-testing-library',
     author: 'Manfred Mann',
     url: 'www.url.com',
-    user: '2'
+    user: '2',
   }
 
   const { container } = render(<Blog blog={blog} />)
@@ -17,18 +17,19 @@ test('renders title and author but nothing else', () => {
   const div1 = container.querySelector('.blogLess')
   const div2 = container.querySelector('.blogMore')
   expect(div2).not.toBeDefined
-  expect(div1).toHaveTextContent('Component testing is done with react-testing-library')
+  expect(div1).toHaveTextContent(
+    'Component testing is done with react-testing-library'
+  )
   expect(div1).toHaveTextContent('Manfred Mann')
   expect(container).not.toHaveTextContent('www.url.com')
   expect(container).not.toHaveTextContent('likes')
-
 })
 test('clicking the show button shows url and likes', async () => {
   const blog = {
     title: 'Component testing is done with react-testing-library',
     author: 'Manfred Mann',
     url: 'www.url.com',
-    user: '2'
+    user: '2',
   }
   const { container } = render(<Blog blog={blog} />)
   screen.debug()
@@ -43,10 +44,10 @@ test('clicking like button fires handler twice', async () => {
     title: 'Component testing is done with react-testing-library',
     author: 'Manfred Mann',
     url: 'www.url.com',
-    user: '2'
+    user: '2',
   }
   const likeMockHandler = jest.fn()
-  render(<Blog blog={blog} likeHandler={likeMockHandler}/>)
+  render(<Blog blog={blog} likeHandler={likeMockHandler} />)
   screen.debug()
   const user = userEvent.setup()
   const showButton = screen.getByText('Show')
