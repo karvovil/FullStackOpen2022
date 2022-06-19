@@ -1,3 +1,4 @@
+//import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -5,15 +6,15 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
+  const notification = useSelector((state) => state)
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
-
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [errorType, setErrorType] = useState('')
 
   const blogFormRef = useRef()
 
@@ -50,10 +51,15 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setErrorType('error')
+      dispatch({
+        type: 'NEW_NOTIFICATION',
+        data: {
+          message: 'wrong credentials',
+          messageType: 'error',
+        },
+      })
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch({ type: 'REMOVE' })
       }, 5000)
     }
   }
@@ -64,11 +70,15 @@ const App = () => {
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
     const createdBlog = await blogService.postNew(newBlog)
-
-    setErrorMessage(`${createdBlog.title} created`)
-    setErrorType('notification')
+    dispatch({
+      type: 'NEW_NOTIFICATION',
+      data: {
+        message: `${createdBlog.title} created`,
+        messageType: 'notification',
+      },
+    })
     setTimeout(() => {
-      setErrorMessage(null)
+      dispatch({ type: 'REMOVE' })
     }, 5000)
     setBlogs(blogs.concat(createdBlog))
   }
@@ -91,7 +101,10 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} type={errorType} />
+        <Notification
+          message={notification.message}
+          type={notification.type}
+        />
         <h2>Log in to application</h2>
         <form>
           <div>
@@ -130,7 +143,10 @@ const App = () => {
         </button>
       </p>
       <h2>blogs</h2>
-      <Notification message={errorMessage} type={errorType} />
+      <Notification
+        message={notification.message}
+        type={notification.type}
+      />
       {blogs.map((blog) => (
         <Blog
           key={blog.id}
