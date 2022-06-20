@@ -4,7 +4,7 @@ const notificationReducer = (
 ) => {
   if (action.type === 'NEW_NOTIFICATION') {
     return { message: action.data.message, type: action.data.type }
-  } else if (action.type === 'REMOVE') {
+  } else if (action.type === 'REMOVE_NOTIFICATION') {
     return { message: null, type: null }
   }
   return state
