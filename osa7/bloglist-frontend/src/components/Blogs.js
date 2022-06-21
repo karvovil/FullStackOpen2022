@@ -1,8 +1,8 @@
 import Blog from './Blog'
 import { useSelector } from 'react-redux'
 
-const Blogs = async ({ handleLike, handleRemove }) => {
-  const blogs = await useSelector((state) => state.blogs)
+const Blogs = ({ handleLike, handleRemove }) => {
+  const blogs = useSelector((state) => state.blogs)
   return blogs.map((blog) => (
     <Blog
       key={blog.id}

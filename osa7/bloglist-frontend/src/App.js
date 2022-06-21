@@ -17,6 +17,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   const notification = useSelector((state) => state.notification)
+  const blogs = useSelector((state) => state.blogs)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -27,9 +28,12 @@ const App = () => {
     }
   }, [])
   useEffect(() => {
-    dispatch({
-      type: 'SET_BLOGS',
-    })
+     blogService.getAll().then(blogsFromDB =>
+      dispatch({
+        type: 'SET_BLOGS',
+        data: blogsFromDB
+      })
+    )
   }, [])
 
   const handleLogin = async (event) => {
@@ -68,9 +72,10 @@ const App = () => {
 
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
+    const createdBlog = await blogService.postNew(newBlog)
     dispatch({
       type: 'NEW_BLOG',
-      data: newBlog,
+      data: createdBlog,
     })
     dispatch({
       type: 'NEW_NOTIFICATION',
@@ -84,13 +89,22 @@ const App = () => {
     }, 5000)
   }
   const handleLike = async (id) => {
+    const blogToModify = blogs.find((blog) => blog.id === id)
+    const modifiedBlog = {
+      ...blogToModify,
+      user: blogToModify.user.id,
+      likes: blogToModify.likes + 1,
+    }
+    const updatedBlog = await blogService.update(modifiedBlog)
+
     dispatch({
-      type: 'LIKE_BLOG',
-      id: id,
+      type: 'UPDATE_BLOG',
+      data: updatedBlog,
     })
   }
   const handleRemove = async (id) => {
     if (window.confirm('Sure?')) {
+      await blogService.deleteBlog(id)
       dispatch({
         type: 'REMOVE_BLOG',
         id: id,
@@ -100,7 +114,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={notification.message} type={notification.type} />
+        <Notification message={notification.message} type={notification.messageType} />
         <h2>Log in to application</h2>
         <form>
           <div>
@@ -139,7 +153,7 @@ const App = () => {
         </button>
       </p>
       <h2>blogs</h2>
-      <Notification message={notification.message} type={notification.type} />
+      <Notification message={notification.message} type={notification.messageType} />
       <Blogs
         handleRemove={handleRemove}
         handleLike={handleLike}
