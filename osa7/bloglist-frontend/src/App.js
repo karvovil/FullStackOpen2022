@@ -7,6 +7,7 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { useSelector, useDispatch } from 'react-redux'
+import { removeBlog, setBlogs, addBlog, updateBlog } from './reducers/blogReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -29,12 +30,9 @@ const App = () => {
   }, [])
   useEffect(() => {
      blogService.getAll().then(blogsFromDB =>
-      dispatch({
-        type: 'SET_BLOGS',
-        data: blogsFromDB
-      })
+      dispatch(setBlogs(blogsFromDB))
     )
-  }, [])
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -73,14 +71,11 @@ const App = () => {
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
     const createdBlog = await blogService.postNew(newBlog)
-    dispatch({
-      type: 'NEW_BLOG',
-      data: createdBlog,
-    })
+    dispatch(addBlog(createdBlog))
     dispatch({
       type: 'NEW_NOTIFICATION',
       data: {
-        message: `${newBlog.title} created`, //TODO get actual blog from db
+        message: `${createdBlog.title} created`, 
         messageType: 'notification',
       },
     })
@@ -96,19 +91,13 @@ const App = () => {
       likes: blogToModify.likes + 1,
     }
     const updatedBlog = await blogService.update(modifiedBlog)
+    dispatch(updateBlog(updatedBlog))
 
-    dispatch({
-      type: 'UPDATE_BLOG',
-      data: updatedBlog,
-    })
   }
   const handleRemove = async (id) => {
     if (window.confirm('Sure?')) {
       await blogService.deleteBlog(id)
-      dispatch({
-        type: 'REMOVE_BLOG',
-        id: id,
-      })
+      dispatch(removeBlog(id))
     }
   }
   if (user === null) {

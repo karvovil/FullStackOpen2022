@@ -1,19 +1,29 @@
-const blogReducer = (state = [], action) => {
-  console.log('ACTION: ', action)
-  switch (action.type) {
-    case 'NEW_BLOG': {
-      return state.concat(action.data)
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = []
+
+const blogSlice = createSlice({
+  name: 'blogs',
+  initialState,
+  reducers:{
+    addBlog(state, action){
+      const newBlog = action.payload
+      state.push(newBlog)
+    },
+    setBlogs(state, action){
+      const blogsFromDB = action.payload
+      return blogsFromDB.sort((a, b) => b.likes - a.likes)
+    },
+    removeBlog(state, action){
+      const id = action.payload
+      return state.filter((blog) => blog.id !== id)
+    },
+    updateBlog(state, action){
+      const updatedBlog = action.payload
+      return state.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
     }
-    case 'SET_BLOGS': {
-      return action.data.sort((a, b) => b.likes - a.likes)
-    }
-    case 'REMOVE_BLOG':
-      return state.filter((blog) => blog.id !== action.id)
-    case 'UPDATE_BLOG': {
-      return state.map((blog) => (blog.id === action.data.id ? action.data : blog))
-    }
-    default:
-      return state
   }
-}
-export default blogReducer
+})
+
+export const { addBlog, setBlogs, removeBlog, updateBlog} = blogSlice.actions
+export default blogSlice.reducer

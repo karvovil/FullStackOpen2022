@@ -15,9 +15,7 @@ const Blog = ({ blog, likeHandler, removeHandler }) => {
   )
   let deleteButtonStyle
   if (currentUser) {
-    const isOwner =
-      JSON.stringify(currentUser.username) ===
-      JSON.stringify(blog.user.username)
+    const isOwner = JSON.stringify(currentUser.username) === JSON.stringify(blog.user.username)
     deleteButtonStyle = { display: isOwner ? '' : 'none' }
   }
 
