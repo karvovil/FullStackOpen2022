@@ -1,37 +1,42 @@
-//import React from 'react'
+import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import Blogs from './components/Blogs'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import blogService from './services/blogs'
 import { useSelector, useDispatch } from 'react-redux'
-import { removeBlog, setBlogs, addBlog, updateBlog } from './reducers/blogReducer'
-
+import { appendBlog, initializeBlogs } from './reducers/blogReducer'
+import { setNotification, removeNotification } from './reducers/notificationReducer'
+import {removeUser, setUser } from './reducers/userReducer'
+import Users from './components/Users'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from "react-router-dom"
+const padding = {
+  padding: 5
+}
 const App = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
 
   const notification = useSelector((state) => state.notification)
-  const blogs = useSelector((state) => state.blogs)
-
+  const user = useSelector(state => state.user)
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const currentUser = JSON.parse(loggedUserJSON)
-      setUser(currentUser)
+      dispatch( setUser(currentUser) )
       blogService.setToken(currentUser.token)
     }
-  }, [])
+  }, [dispatch])
   useEffect(() => {
-     blogService.getAll().then(blogsFromDB =>
-      dispatch(setBlogs(blogsFromDB))
-    )
+    dispatch(initializeBlogs())
   }, [dispatch])
 
   const handleLogin = async (event) => {
@@ -46,60 +51,32 @@ const App = () => {
         'loggedBlogappUser',
         JSON.stringify(loggedInUser)
       )
-      setUser(loggedInUser)
+      dispatch( setUser(loggedInUser) )
       blogService.setToken(loggedInUser.token)
 
       setUsername('')
       setPassword('')
     } catch (exception) {
-      dispatch({
-        type: 'NEW_NOTIFICATION',
-        data: {
+      dispatch(setNotification({
           message: 'wrong credentials',
           messageType: 'error',
-        },
-      })
+        }),
+      )
       setTimeout(() => {
-        dispatch({ type: 'REMOVE_NOTIFICATION' })
+        dispatch(removeNotification)
       }, 5000)
     }
   }
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
+    dispatch(removeUser())
   }
 
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
-    const createdBlog = await blogService.postNew(newBlog)
-    dispatch(addBlog(createdBlog))
-    dispatch({
-      type: 'NEW_NOTIFICATION',
-      data: {
-        message: `${createdBlog.title} created`, 
-        messageType: 'notification',
-      },
-    })
-    setTimeout(() => {
-      dispatch({ type: 'REMOVE_NOTIFICATION' })
-    }, 5000)
+    dispatch(appendBlog(newBlog))
   }
-  const handleLike = async (id) => {
-    const blogToModify = blogs.find((blog) => blog.id === id)
-    const modifiedBlog = {
-      ...blogToModify,
-      user: blogToModify.user.id,
-      likes: blogToModify.likes + 1,
-    }
-    const updatedBlog = await blogService.update(modifiedBlog)
-    dispatch(updateBlog(updatedBlog))
 
-  }
-  const handleRemove = async (id) => {
-    if (window.confirm('Sure?')) {
-      await blogService.deleteBlog(id)
-      dispatch(removeBlog(id))
-    }
-  }
   if (user === null) {
     return (
       <div>
@@ -134,23 +111,32 @@ const App = () => {
     )
   }
   return (
-    <div>
-      <p>
-        {user.name} logged in
-        <button id="logout-button" onClick={handleLogout}>
-          Log Out
-        </button>
-      </p>
-      <h2>blogs</h2>
-      <Notification message={notification.message} type={notification.messageType} />
-      <Blogs
-        handleRemove={handleRemove}
-        handleLike={handleLike}
-      />
-      <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
-        <BlogForm handleCreateBlog={handleCreateBlog} />
-      </Togglable>
-    </div>
+    
+
+    <Router>
+      <div>
+        <p>
+          {user.name} logged in
+          <button id="logout-button" onClick={handleLogout}>
+            Log Out
+          </button>
+        </p>
+        <h2>blogs</h2>
+        <Notification message={notification.message} type={notification.messageType} />
+        <Blogs/>
+        <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
+          <BlogForm handleCreateBlog={handleCreateBlog} />
+        </Togglable>
+      </div>
+      <div>
+        <Link style={padding} to="/users">users</Link>
+      </div>
+
+      <Routes>
+        <Route path="/users" element={<Users />} />
+      </Routes>
+      
+    </Router> 
   )
 }
 

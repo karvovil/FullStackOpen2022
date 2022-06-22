@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, likeHandler, removeHandler }) => {
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 0,
     paddingLeft: 2,
@@ -9,6 +11,7 @@ const Blog = ({ blog, likeHandler, removeHandler }) => {
     marginBottom: 5,
   }
   const [showBlogInfo, setShowBlogInfo] = useState(false)
+  const dispatch = useDispatch()
 
   const currentUser = JSON.parse(
     window.localStorage.getItem('loggedBlogappUser')
@@ -32,13 +35,14 @@ const Blog = ({ blog, likeHandler, removeHandler }) => {
         </div>
         <div>{blog.url}</div>
         <div>
-          likes: {blog.likes} <button onClick={likeHandler}>Like</button>{' '}
+          likes: {blog.likes} 
+          <button onClick={ () => dispatch(likeBlog(blog.id)) }>Like</button>{' '}
         </div>
         <div>{blog.user.name}</div>
         <button
           className="showButton"
           style={deleteButtonStyle}
-          onClick={removeHandler}
+          onClick={ () => dispatch(deleteBlog(blog.id)) }
         >
           Remove
         </button>
