@@ -43,7 +43,6 @@ export const initializeBlogs = () => {
 export const likeBlog = (id) => {
   return async (dispatch, getState) => {
     const blogs = getState().blogs
-    console.log(blogs)
     const blogToModify = blogs.find((blog) => blog.id === id)
     const modifiedBlog = {
       ...blogToModify,

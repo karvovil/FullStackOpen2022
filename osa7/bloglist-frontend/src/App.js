@@ -1,19 +1,18 @@
 import React from 'react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Blogs from './components/Blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import { useSelector, useDispatch } from 'react-redux'
-import { appendBlog, initializeBlogs } from './reducers/blogReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 import {
   setNotification,
   removeNotification,
 } from './reducers/notificationReducer'
 import { removeUser, setUser } from './reducers/userReducer'
 import Users from './components/Users'
+import User from './components/User'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 const padding = {
   padding: 5,
@@ -23,7 +22,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const blogFormRef = useRef()
 
   const notification = useSelector((state) => state.notification)
   const user = useSelector((state) => state.user)
@@ -73,11 +71,6 @@ const App = () => {
     dispatch(removeUser())
   }
 
-  const handleCreateBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility()
-    dispatch(appendBlog(newBlog))
-  }
-
   if (user === null) {
     return (
       <div>
@@ -116,7 +109,7 @@ const App = () => {
   }
   return (
     <Router>
-      <div>
+    <div>
         <p>
           {user.name} logged in
           <button id="logout-button" onClick={handleLogout}>
@@ -127,11 +120,8 @@ const App = () => {
         <Notification
           message={notification.message}
           type={notification.messageType}
-        />
-        <Blogs />
-        <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
-          <BlogForm handleCreateBlog={handleCreateBlog} />
-        </Togglable>
+          />
+
       </div>
       <div>
         <Link style={padding} to="/users">
@@ -140,7 +130,9 @@ const App = () => {
       </div>
 
       <Routes>
+        <Route path="/" element={<Blogs />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User/>} />
       </Routes>
     </Router>
   )
