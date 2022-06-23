@@ -8,15 +8,15 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import { useSelector, useDispatch } from 'react-redux'
 import { appendBlog, initializeBlogs } from './reducers/blogReducer'
-import { setNotification, removeNotification } from './reducers/notificationReducer'
-import {removeUser, setUser } from './reducers/userReducer'
-import Users from './components/Users'
 import {
-  BrowserRouter as Router,
-  Routes, Route, Link
-} from "react-router-dom"
+  setNotification,
+  removeNotification,
+} from './reducers/notificationReducer'
+import { removeUser, setUser } from './reducers/userReducer'
+import Users from './components/Users'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 const padding = {
-  padding: 5
+  padding: 5,
 }
 const App = () => {
   const dispatch = useDispatch()
@@ -26,12 +26,12 @@ const App = () => {
   const blogFormRef = useRef()
 
   const notification = useSelector((state) => state.notification)
-  const user = useSelector(state => state.user)
+  const user = useSelector((state) => state.user)
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const currentUser = JSON.parse(loggedUserJSON)
-      dispatch( setUser(currentUser) )
+      dispatch(setUser(currentUser))
       blogService.setToken(currentUser.token)
     }
   }, [dispatch])
@@ -51,16 +51,17 @@ const App = () => {
         'loggedBlogappUser',
         JSON.stringify(loggedInUser)
       )
-      dispatch( setUser(loggedInUser) )
+      dispatch(setUser(loggedInUser))
       blogService.setToken(loggedInUser.token)
 
       setUsername('')
       setPassword('')
     } catch (exception) {
-      dispatch(setNotification({
+      dispatch(
+        setNotification({
           message: 'wrong credentials',
           messageType: 'error',
-        }),
+        })
       )
       setTimeout(() => {
         dispatch(removeNotification)
@@ -80,7 +81,10 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={notification.message} type={notification.messageType} />
+        <Notification
+          message={notification.message}
+          type={notification.messageType}
+        />
         <h2>Log in to application</h2>
         <form>
           <div>
@@ -111,8 +115,6 @@ const App = () => {
     )
   }
   return (
-    
-
     <Router>
       <div>
         <p>
@@ -122,21 +124,25 @@ const App = () => {
           </button>
         </p>
         <h2>blogs</h2>
-        <Notification message={notification.message} type={notification.messageType} />
-        <Blogs/>
+        <Notification
+          message={notification.message}
+          type={notification.messageType}
+        />
+        <Blogs />
         <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
           <BlogForm handleCreateBlog={handleCreateBlog} />
         </Togglable>
       </div>
       <div>
-        <Link style={padding} to="/users">users</Link>
+        <Link style={padding} to="/users">
+          users
+        </Link>
       </div>
 
       <Routes>
         <Route path="/users" element={<Users />} />
       </Routes>
-      
-    </Router> 
+    </Router>
   )
 }
 
