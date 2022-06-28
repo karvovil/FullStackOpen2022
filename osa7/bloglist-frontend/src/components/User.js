@@ -15,7 +15,7 @@ const User = () => {
         setUser(result)
       }
     )
-  }, [])
+  }, [id])
 
   console.log(user)
   

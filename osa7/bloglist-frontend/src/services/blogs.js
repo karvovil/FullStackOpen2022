@@ -10,6 +10,12 @@ const getAll = () => {
   const request = axios.get(baseUrl)
   return request.then((response) => response.data)
 }
+const getOne = (id) => {
+  const request = axios.get(baseUrl)
+  return request.then(response => 
+    response.data.find(user => user.id===id)
+  )
+}
 const postNew = (newBlog) => {
   const request = axios.post(baseUrl, newBlog, {
     headers: { Authorization: `${token}` },
@@ -30,4 +36,4 @@ const deleteBlog = (id) => {
   return request.then((response) => response.data)
 }
 
-export default { getAll, postNew, update, deleteBlog, setToken }
+export default { getAll, getOne, postNew, update, deleteBlog, setToken }

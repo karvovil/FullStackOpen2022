@@ -1,8 +1,13 @@
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import blogService from '../services/blogs'
+import { useState, useEffect } from 'react'
+import {useParams} from "react-router-dom"
+import { useSelector, useDispatch } from 'react-redux'
 
-const Blog = ({ blog }) => {
+
+const Blog = () => {
+  const id = useParams().id
+  
   const blogStyle = {
     paddingTop: 0,
     paddingLeft: 2,
@@ -10,37 +15,31 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
-  const [showBlogInfo, setShowBlogInfo] = useState(false)
   const dispatch = useDispatch()
-
+  const blog = useSelector((state) => state.blogs).find(blog => blog.id === id)
   const currentUser = JSON.parse(
     window.localStorage.getItem('loggedBlogappUser')
   )
   let deleteButtonStyle
-  if (currentUser) {
+  if (currentUser && blog) {
     const isOwner =
       JSON.stringify(currentUser.username) ===
       JSON.stringify(blog.user.username)
     deleteButtonStyle = { display: isOwner ? '' : 'none' }
   }
 
-  const switchVisibility = () => {
-    setShowBlogInfo(!showBlogInfo)
-  }
-
-  if (showBlogInfo) {
-    return (
+    if(blog){
+      return (
       <div className="blogMore" style={blogStyle}>
-        <div>
+        <h1>
           {blog.title} {blog.author}{' '}
-          <button onClick={switchVisibility}>Hide</button>
-        </div>
-        <div>{blog.url}</div>
+        </h1>
+        <a href={blog.url}>{blog.url}</a>
         <div>
           likes: {blog.likes}
           <button onClick={() => dispatch(likeBlog(blog.id))}>Like</button>{' '}
         </div>
-        <div>{blog.user.name}</div>
+        <div>Added by: {blog.user.name}</div>
         <button
           className="showButton"
           style={deleteButtonStyle}
@@ -49,15 +48,6 @@ const Blog = ({ blog }) => {
           Remove
         </button>
       </div>
-    )
-  } else {
-    return (
-      <div className="blogLess">
-        {blog.title} {blog.author}
-        <button onClick={switchVisibility}>Show</button>
-      </div>
-    )
-  }
+    )}
 }
-
 export default Blog

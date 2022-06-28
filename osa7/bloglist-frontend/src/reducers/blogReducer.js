@@ -50,7 +50,7 @@ export const likeBlog = (id) => {
       likes: blogToModify.likes + 1,
     }
     const updatedBlog = await blogService.update(modifiedBlog)
-    dispatch(updateBlog(updatedBlog))
+    dispatch(updateBlog({...updatedBlog, user: blogToModify.user}))
   }
 }
 export const deleteBlog = (id) => {

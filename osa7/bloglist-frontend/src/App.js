@@ -14,6 +14,7 @@ import { removeUser, setUser } from './reducers/userReducer'
 import Users from './components/Users'
 import User from './components/User'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import Blog from './components/Blog'
 const padding = {
   padding: 5,
 }
@@ -133,6 +134,7 @@ const App = () => {
         <Route path="/" element={<Blogs />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User/>} />
+        <Route path="/blogs/:id" element={<Blog />} />
       </Routes>
     </Router>
   )
