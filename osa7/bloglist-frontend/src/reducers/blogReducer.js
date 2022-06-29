@@ -76,3 +76,14 @@ export const appendBlog = (newBlog) => {
     }, 5000)
   }
 }
+
+export const commentBlog = (commentedBlog) => {
+  return async (dispatch, getState) => {
+    const blogForDB = {
+      ...commentedBlog,
+      user: commentedBlog.user.id,
+    }
+    const updatedBlog = await blogService.update(blogForDB)
+    dispatch(updateBlog({ ...updatedBlog, user: commentedBlog.user }))
+  }
+}

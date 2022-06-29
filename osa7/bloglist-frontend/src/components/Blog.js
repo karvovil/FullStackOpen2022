@@ -1,7 +1,7 @@
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-
+import Comments from './Comments'
 const Blog = () => {
   const id = useParams().id
 
@@ -26,7 +26,7 @@ const Blog = () => {
       JSON.stringify(blog.user.username)
     deleteButtonStyle = { display: isOwner ? '' : 'none' }
   }
-
+  console.log(blog)
   if (blog) {
     return (
       <div className="blogMore" style={blogStyle}>
@@ -46,6 +46,7 @@ const Blog = () => {
         >
           Remove
         </button>
+        <Comments blog={blog} />
       </div>
     )
   }

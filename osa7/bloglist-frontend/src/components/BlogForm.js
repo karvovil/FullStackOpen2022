@@ -13,6 +13,7 @@ const BlogForm = ({ handleCreateBlog }) => {
       author: author,
       url: url,
       likes: 0,
+      comments: [],
     }
     handleCreateBlog(blog)
     setTitle('')
