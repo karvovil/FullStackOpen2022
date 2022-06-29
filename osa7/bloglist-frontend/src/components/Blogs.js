@@ -4,15 +4,15 @@ import { appendBlog } from '../reducers/blogReducer'
 import { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-const blogStyle = {
-  paddingTop: 5,
-  paddingBottom: 0,
-  paddingLeft: 2,
-  border: 'solid',
-  borderWidth: 1,
-  marginTop: 5,
-  marginBottom: 5,
-}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@mui/material'
+
 const Blogs = () => {
   const blogs = useSelector((state) => state.blogs)
   const blogFormRef = useRef()
@@ -23,17 +23,28 @@ const Blogs = () => {
     dispatch(appendBlog(newBlog))
   }
   return (
-    <>
-      {blogs.map((blog) => (
-        <div key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-        </div>
-      ))}
-
+    <div>
+      <h2>blogs</h2>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {blogs.map((blog) => (
+              <TableRow key={blog.id} >
+                <TableCell>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </TableCell>
+                <TableCell>
+                  {blog.author}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Togglable id="new-blog" buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm handleCreateBlog={handleCreateBlog} />
       </Togglable>
-    </>
+    </div>
   )
 }
 export default Blogs

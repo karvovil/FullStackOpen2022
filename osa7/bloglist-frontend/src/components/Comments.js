@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { commentBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
 

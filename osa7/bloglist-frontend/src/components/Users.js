@@ -1,5 +1,6 @@
 import userService from '../services/users'
 import { useState, useEffect } from 'react'
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -8,26 +9,28 @@ const Users = () => {
     userService.getAll().then((result) => setUsers(result))
   }, [])
   const userList = users.map((user) => (
-    <tr key={user.id}>
-      <td>
+    <TableRow key={user.id}>
+      <TableCell>
         {' '}
         <a href={`/users/${user.id}`}>{user.name}</a>
-      </td>
-      <td> {user.blogs.length} </td>
-    </tr>
+      </TableCell>
+      <TableCell> {user.blogs.length} </TableCell>
+    </TableRow>
   ))
   return (
     <div>
       <h2>Users</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th> blogs created </th>
-          </tr>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell> </TableCell>
+            <TableCell> blogs created </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {userList}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   )
 }

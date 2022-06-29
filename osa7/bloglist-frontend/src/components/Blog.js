@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Comments from './Comments'
 const Blog = () => {
   const id = useParams().id
-
+  
   const blogStyle = {
     paddingTop: 0,
     paddingLeft: 2,

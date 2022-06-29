@@ -15,16 +15,8 @@ import Users from './components/Users'
 import User from './components/User'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Blog from './components/Blog'
-const padding = {
-  padding: 5,
-}
-const navigationStyle = {
-  background: 'lightgrey',
-  paddingBottom: 0,
-  paddingLeft: 2,
-  marginTop: 5,
-  marginBottom: 5,
-}
+import { Box, Typography, Container, TextField, Button, AppBar, IconButton, Toolbar } from '@mui/material'
+
 const App = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
@@ -80,68 +72,74 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <Container>
+        <div>
+          <Notification
+            message={notification.message}
+            type={notification.messageType}
+          />
+          <h2>Log in to application</h2>
+          <form>
+            <div>
+              <TextField
+                id="username"
+                type="text"
+                value={username}
+                label="Username"
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </div>
+            <div>
+              <TextField
+                id="password"
+                type="password"
+                value={password}
+                label="Password"
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </div>
+            <Button variant="contained" color="primary" id="login-button" type="submit" onClick={handleLogin}>
+              login
+            </Button>
+          </form>
+        </div>
+      </Container>
+    )
+  }
+  return (
+    <Container>
+      <Router>
+      <Box >
+<AppBar position="static">
+  <Toolbar>
+    <IconButton edge="start" color="inherit" aria-label="menu">
+    </IconButton>
+    <Button to="/" component={Link} color="inherit"  >
+      blogs
+    </Button>
+    <Button to="/users" component={Link} color="inherit" sx={{ flexGrow: 1 }}  >
+      users
+    </Button>    
+      <Typography sx={{ flexGrow: 3 }}>{user.name} logged in</Typography >
+      <Button onClick={handleLogout} color="inherit" >
+        logout
+      </Button>
+  </Toolbar>
+</AppBar>
+</Box>
         <Notification
           message={notification.message}
           type={notification.messageType}
         />
-        <h2>Log in to application</h2>
-        <form>
-          <div>
-            username
-            <input
-              id="username"
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              id="password"
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button id="login-button" type="submit" onClick={handleLogin}>
-            login
-          </button>
-        </form>
-      </div>
-    )
-  }
-  return (
-    <Router>
-      <div></div>
-      <div style={navigationStyle}>
-        <Link style={padding} to="/">
-          blogs
-        </Link>
-        <Link style={padding} to="/users">
-          users
-        </Link>
-        {user.name} logged in
-        <button id="logout-button" onClick={handleLogout}>
-          Log Out
-        </button>
-      </div>
-      <h2>blogs</h2>
-      <Notification
-        message={notification.message}
-        type={notification.messageType}
-      />
 
-      <Routes>
-        <Route path="/" element={<Blogs />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:id" element={<User />} />
-        <Route path="/blogs/:id" element={<Blog />} />
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="/" element={<Blogs />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<Blog />} />
+        </Routes>
+      </Router>
+    </Container>
   )
 }
 
