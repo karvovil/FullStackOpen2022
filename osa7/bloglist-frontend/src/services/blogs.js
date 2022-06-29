@@ -12,8 +12,8 @@ const getAll = () => {
 }
 const getOne = (id) => {
   const request = axios.get(baseUrl)
-  return request.then(response => 
-    response.data.find(user => user.id===id)
+  return request.then((response) =>
+    response.data.find((user) => user.id === id)
   )
 }
 const postNew = (newBlog) => {

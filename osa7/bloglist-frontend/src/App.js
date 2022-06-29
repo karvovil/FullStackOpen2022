@@ -18,11 +18,17 @@ import Blog from './components/Blog'
 const padding = {
   padding: 5,
 }
+const navigationStyle = {
+  background: 'lightgrey',
+  paddingBottom: 0,
+  paddingLeft: 2,
+  marginTop: 5,
+  marginBottom: 5,
+}
 const App = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
 
   const notification = useSelector((state) => state.notification)
   const user = useSelector((state) => state.user)
@@ -110,30 +116,29 @@ const App = () => {
   }
   return (
     <Router>
-    <div>
-        <p>
-          {user.name} logged in
-          <button id="logout-button" onClick={handleLogout}>
-            Log Out
-          </button>
-        </p>
-        <h2>blogs</h2>
-        <Notification
-          message={notification.message}
-          type={notification.messageType}
-          />
-
-      </div>
-      <div>
+      <div></div>
+      <div style={navigationStyle}>
+        <Link style={padding} to="/">
+          blogs
+        </Link>
         <Link style={padding} to="/users">
           users
         </Link>
+        {user.name} logged in
+        <button id="logout-button" onClick={handleLogout}>
+          Log Out
+        </button>
       </div>
+      <h2>blogs</h2>
+      <Notification
+        message={notification.message}
+        type={notification.messageType}
+      />
 
       <Routes>
         <Route path="/" element={<Blogs />} />
         <Route path="/users" element={<Users />} />
-        <Route path="/users/:id" element={<User/>} />
+        <Route path="/users/:id" element={<User />} />
         <Route path="/blogs/:id" element={<Blog />} />
       </Routes>
     </Router>

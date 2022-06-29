@@ -8,7 +8,7 @@ const getAll = async () => {
 }
 const getOne = async (id) => {
   const response = await axios.get(baseUrl)
-  const singleUser = response.data.find(user => user.id===id)
+  const singleUser = response.data.find((user) => user.id === id)
   return singleUser
 }
 

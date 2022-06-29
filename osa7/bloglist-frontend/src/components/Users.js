@@ -7,22 +7,25 @@ const Users = () => {
   useEffect(() => {
     userService.getAll().then((result) => setUsers(result))
   }, [])
-  const userList = users.map((user) =>
-  <tr key={user.id}>
-    <td> <a href={`/users/${user.id}`}>{user.name}</a></td>
-    <td> {user.blogs.length} </td> 
-  </tr>
-  )
+  const userList = users.map((user) => (
+    <tr key={user.id}>
+      <td>
+        {' '}
+        <a href={`/users/${user.id}`}>{user.name}</a>
+      </td>
+      <td> {user.blogs.length} </td>
+    </tr>
+  ))
   return (
     <div>
       <h2>Users</h2>
       <table>
         <tbody>
-        <tr>
-          <th></th>
-          <th> blogs created </th>
-        </tr>
-        {userList}
+          <tr>
+            <th></th>
+            <th> blogs created </th>
+          </tr>
+          {userList}
         </tbody>
       </table>
     </div>

@@ -1,13 +1,10 @@
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
-import blogService from '../services/blogs'
-import { useState, useEffect } from 'react'
-import {useParams} from "react-router-dom"
+import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-
 
 const Blog = () => {
   const id = useParams().id
-  
+
   const blogStyle = {
     paddingTop: 0,
     paddingLeft: 2,
@@ -16,7 +13,9 @@ const Blog = () => {
     marginBottom: 5,
   }
   const dispatch = useDispatch()
-  const blog = useSelector((state) => state.blogs).find(blog => blog.id === id)
+  const blog = useSelector((state) => state.blogs).find(
+    (blog) => blog.id === id
+  )
   const currentUser = JSON.parse(
     window.localStorage.getItem('loggedBlogappUser')
   )
@@ -28,8 +27,8 @@ const Blog = () => {
     deleteButtonStyle = { display: isOwner ? '' : 'none' }
   }
 
-    if(blog){
-      return (
+  if (blog) {
+    return (
       <div className="blogMore" style={blogStyle}>
         <h1>
           {blog.title} {blog.author}{' '}
@@ -48,6 +47,7 @@ const Blog = () => {
           Remove
         </button>
       </div>
-    )}
+    )
+  }
 }
 export default Blog
