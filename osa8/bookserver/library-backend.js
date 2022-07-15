@@ -103,12 +103,17 @@ type Author {
 }
   type Query {
     bookCount: Int!
+    authorCount: Int!
+    authors: [String!]
+    uniBooks: [String]!
   }
 `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length
+    bookCount: () => books.length,
+    authorCount: () => (new Set(books.map(b=>b.author))).size,
+    authors: () => books.map(book => book.author),
   }
 }
 
