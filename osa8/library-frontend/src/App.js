@@ -22,16 +22,9 @@ const ALL_BOOKS = gql`
     }
   }
 `
-const Notify = ({ errorMessage }) => {
-  if (!errorMessage) {
-    return null
-  }
-  return <div style={{ color: 'red' }}>{errorMessage}</div>
-}
-
 const App = () => {
   const [page, setPage] = useState('authors')
-  const [errorMessage, setErrorMessage] = useState(null)
+
 
   const authorResult = useQuery( ALL_AUTHORS, { pollInterval: 2000 } )
   const bookResult = useQuery( ALL_BOOKS, { pollInterval: 2000 } )
@@ -39,16 +32,9 @@ const App = () => {
   if (authorResult.loading || bookResult.loading)  {
     return <div>loading...</div>
   }
-  const notify = (message) => {
-    setErrorMessage(message)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 10000)
-  }
   return (
     <div>
       <div>
-        <Notify errorMessage={errorMessage} />
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
@@ -58,7 +44,7 @@ const App = () => {
 
       <Books show={page === 'books'} books={bookResult.data.allBooks} />
 
-      <NewBook show={page === 'add'} setError={ notify } />
+      <NewBook show={page === 'add'}  />
     </div>
   )
 }
