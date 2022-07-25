@@ -1,5 +1,21 @@
-const { ApolloServer, gql } = require('apollo-server')
 const { v1: uuid } = require('uuid')
+
+const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+const Author = require('./models/author')
+const Book = require('./models/book')
+
+const MONGODB_URI = 'mongodb+srv://karvovil:hopohopomongo@cluster0.cnk1e.mongodb.net/?retryWrites=true&w=majority'
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
 
 let authors = [
   {
@@ -93,9 +109,9 @@ const typeDefs = gql`
 type Book {
   title: String!
   published: Int!
-  author: String!
+  author: Author!
+  genres: [String!]!
   id: ID!
-  genres: [String]
 }
 type Author {
   name: String!
@@ -132,9 +148,9 @@ const resolvers = {
       }
       return filteredBooks
     },
-    bookCount: () => books.length,
-    allAuthors: () => authors,
-    authorCount: () => (new Set(books.map(b=>b.author))).size
+    bookCount: async () => Book.collection.countDocuments(),
+    allAuthors: async () => Author.find({}),
+    authorCount: () => Author.collection.countDocuments()
   },
   Author: {
     bookCount: (root) => books.filter(b => b.author === root.name).length
