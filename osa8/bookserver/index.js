@@ -1,15 +1,14 @@
 const { v1: uuid } = require('uuid')
+require('dotenv').config()
 
 const { ApolloServer, UserInputError, gql } = require('apollo-server')
 const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
 
-const MONGODB_URI = 'mongodb+srv://karvovil:hopohopomongo@cluster0.cnk1e.mongodb.net/?retryWrites=true&w=majority'
+console.log('connecting to', process.env.MONGODB_URI)
 
-console.log('connecting to', MONGODB_URI)
-
-mongoose.connect(MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('connected to MongoDB')
   })
@@ -156,14 +155,22 @@ const resolvers = {
     bookCount: (root) => books.filter(b => b.author === root.name).length
   },
   Mutation: {
-    addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-      if(!authors.includes( book.author )){
+    addBook: async (root, args) => {
+      const allAuthors = await Author.find({})
+      if(!allAuthors.map(a => a.name).includes(args.author)){
+        const author = new Author ({name: args.author})
+        author.save()
+        const book = new Book({ ...args, author: author})
+        return book.save()
+      }else{
+        const author = allAuthors.find(a => a.name === args. author)
+        const book = new Book({ ...args, author: author})
+        return book.save()
+      }
+/*   if(!authors.includes( book.author )){
         const author = {name: book.author}
         authors = authors.concat(author)
-      } 
-      return book
+      }  */
     },
     editAuthor: (root, args) => {
       const author = authors.find( a => a.name === args.name)
