@@ -134,25 +134,33 @@ type Author {
     editAuthor(name: String!, setBornTo: Int!): Author
   }
   `
-
+//TODO genre is mandatory!
 const resolvers = {
   Query: {
-    allBooks: (root, args) =>  {
-      let filteredBooks = books
+    allBooks: async (root, args) =>  {
+/*       let filteredBooks = books
       if(args.author){
         filteredBooks = books.filter(b => b.author === args.author)
       }
       if(args.genre){
         filteredBooks = filteredBooks.filter(b => b.genres.includes(args.genre))
-      }
-      return filteredBooks
+      } */
+      return Book.find({})
     },
-    bookCount: async () => Book.collection.countDocuments(),
+    bookCount: async () => Book.collection.countDocuments({}),
     allAuthors: async () => Author.find({}),
-    authorCount: () => Author.collection.countDocuments()
+    authorCount: async () => Author.collection.countDocuments({})
   },
   Author: {
-    bookCount: (root) => books.filter(b => b.author === root.name).length
+    bookCount: async (root) => {
+      console.log(root)
+      return Book.collection.countDocuments({ author: root._id })
+    }
+  },
+  Book: {
+    author: async (root) => {
+      return Author.findOne({_id: root.author})
+    }
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -167,19 +175,16 @@ const resolvers = {
         const book = new Book({ ...args, author: author})
         return book.save()
       }
-/*   if(!authors.includes( book.author )){
-        const author = {name: book.author}
-        authors = authors.concat(author)
-      }  */
     },
-    editAuthor: (root, args) => {
-      const author = authors.find( a => a.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({name: args.name})
+      console.log(author)
       if(!author){
         return null
       }
-      const modifiedAuthor = {...author, born: args.setBornTo}
-      authors = authors.map( a => a.name === args.name ? modifiedAuthor : a)
-      return authors.find( a => a.name === args.name)
+      author.born = args.setBornTo
+      const result = await author.save()
+      return result
     }
   }
 }
