@@ -165,26 +165,42 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args) => {
       const allAuthors = await Author.find({})
-      if(!allAuthors.map(a => a.name).includes(args.author)){
-        const author = new Author ({name: args.author})
-        author.save()
-        const book = new Book({ ...args, author: author})
-        return book.save()
-      }else{
-        const author = allAuthors.find(a => a.name === args. author)
-        const book = new Book({ ...args, author: author})
-        return book.save()
+      const authorIsNew = !allAuthors.map(a => a.name).includes(args.author)
+      const author = authorIsNew ? new Author ({name: args.author}) : allAuthors.find(a => a.name === args. author) 
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
       }
+
+      const book = new Book({ ...args, author: author})
+      try {
+        await book.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return book
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({name: args.name})
-      console.log(author)
+
       if(!author){
         return null
       }
+
       author.born = args.setBornTo
-      const result = await author.save()
-      return result
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return author
     }
   }
 }
