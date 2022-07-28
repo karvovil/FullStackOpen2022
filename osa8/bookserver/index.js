@@ -81,7 +81,6 @@ const resolvers = {
   },
   Author: {
     bookCount: async (root) => {
-      console.log(root)
       return Book.collection.countDocuments({ author: root._id })
     }
   },

@@ -3,24 +3,26 @@ import { useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 
 const SET_BIRTHYEAR = gql`
-mutation createBook( $name: String!, $setBornTo: Int!){
-  editAuthor(
-    name: $name,
-    setBornTo: $setBornTo,
-  ){name}
+mutation EditAuthor($name: String!, $setBornTo: Int!) {
+  editAuthor(name: $name, setBornTo: $setBornTo) {
+    name
+  }
 }
 `
-const SetBirthyear = ({ names }) => {
+const SetBirthyear = ({ names, show }) => {
   const [name, setName] = useState('')
   const [year, setYear] = useState('')
-  const [ setBirthYear, result ] = useMutation(SET_BIRTHYEAR)
+  const [ setBirthYear ] = useMutation(SET_BIRTHYEAR)
+
+  if (!show) {
+    return null
+  }
 
   const submit = async (event) => {
     event.preventDefault()
 
     console.log('set year...')
     setBirthYear({ ignoreResults: false, variables: { name, setBornTo: year } })
-    console.log(result)
 
     setName('')
     setYear('')

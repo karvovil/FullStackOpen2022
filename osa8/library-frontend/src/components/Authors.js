@@ -25,7 +25,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <SetBirthyear names={authors.map(a => a.name)}/>
+      <SetBirthyear show={props.showEdit}names={authors.map(a => a.name)}/>
     </div>
   )
 }
