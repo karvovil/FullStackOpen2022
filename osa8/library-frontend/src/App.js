@@ -17,7 +17,9 @@ const ALL_BOOKS = gql`
   query {
     allBooks  {
       title,
-      author,
+      author{
+        name
+      },
       published
     }
   }
@@ -28,7 +30,7 @@ const App = () => {
 
   const authorResult = useQuery( ALL_AUTHORS, { pollInterval: 2000 } )
   const bookResult = useQuery( ALL_BOOKS, { pollInterval: 2000 } )
-
+  console.log(bookResult)
   if (authorResult.loading || bookResult.loading)  {
     return <div>loading...</div>
   }
