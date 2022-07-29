@@ -43,7 +43,7 @@ type Token {
   value: String!
 }
   type Query {
-    allBooks(author: String, genre: String): [Book]!
+    allBooks(genre: String): [Book]!
     bookCount: Int!
     allAuthors: [Author]!
     authorCount: Int!
@@ -71,7 +71,10 @@ type Token {
   `
 const resolvers = {
   Query: {
-    allBooks: async () => Book.find({}),
+    allBooks: async (root, args) =>
+      args.genre === 'all' ? Book.find({ }):
+        !args.genre ? Book.find({ }):
+          Book.find({ genres:{ $in: args.genre } }) ,
     bookCount: async () => Book.collection.countDocuments({}),
     allAuthors: async () => Author.find({}),
     authorCount: async () => Author.collection.countDocuments({}),
