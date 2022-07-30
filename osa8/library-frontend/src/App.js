@@ -4,30 +4,9 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 import Recommend from './components/Recommend'
-import { gql, useQuery, useApolloClient  } from '@apollo/client'
+import { useQuery, useApolloClient  } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
-
-const ALL_AUTHORS = gql`
-  query {
-    allAuthors  {
-      name,
-      born,
-      bookCount
-    }
-  }
-`
-const ALL_BOOKS = gql`
-  query {
-    allBooks  {
-      title,
-      author{
-        name
-      },
-      published,
-      genres
-    }
-  }
-`
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)

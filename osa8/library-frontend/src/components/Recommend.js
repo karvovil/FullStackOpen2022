@@ -1,12 +1,6 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import { FAVORITE_GENRE } from '../queries'
 
-const FAVORITE_GENRE = gql`
-query Me {
-    me {
-    favoriteGenre  
-    }
-  }
-`
 const Recommend = ({ books, show }) => {
   if (!show) {
     return null
