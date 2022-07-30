@@ -12,7 +12,7 @@ const App = () => {
   const [token, setToken] = useState(null)
 
   const authorResult = useQuery( ALL_AUTHORS, { pollInterval: 2000 } )
-  const bookResult = useQuery( ALL_BOOKS, { pollInterval: 2000 } )
+  const bookResult = useQuery( ALL_BOOKS, { variables: { genre: '', pollInterval: 2000 } } )
   const client = useApolloClient()
 
   const logout = () => {
@@ -27,7 +27,6 @@ const App = () => {
   return (
     <div>
       <div>
-        <h3>token {token}</h3>
         <button onClick={logout}>logout</button>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>

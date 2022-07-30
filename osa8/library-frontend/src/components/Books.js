@@ -4,7 +4,7 @@ import { ALL_GENRES, GENRE_BOOKS } from '../queries'
 
 const Books = ({ show }) => {
 
-  const [currentGenre, setCurrentGenre] = useState('all')
+  const [currentGenre, setCurrentGenre] = useState('')
   const genresResult = useQuery(ALL_GENRES)
   const booksResult = useQuery(
     GENRE_BOOKS,
@@ -20,8 +20,11 @@ const Books = ({ show }) => {
     <div>
       <div>
         <h2>Books</h2>
-        In genre
-        <b> {currentGenre}</b>
+        In genre_
+        <select value={currentGenre} onChange={({ target }) => setCurrentGenre(target.value)}>
+          <option value={''} key={'all'}>{'all'}</option>
+          {  [ ...new Set(genresResult.data.allBooks.map(b => b.genres).reduce((a,b) => a.concat(b), []))].map(g => <option value={g} key={g}>{g}</option>)}
+        </select>
       </div>
       <table>
         <tbody>
@@ -39,10 +42,6 @@ const Books = ({ show }) => {
           ))}
         </tbody>
       </table>
-      <select value={currentGenre} onChange={({ target }) => setCurrentGenre(target.value)}>
-        <option value={'all'} key={'all'}>{'all'}</option>
-        {  [ ...new Set(genresResult.data.allBooks.map(b => b.genres).reduce((a,b) => a.concat(b), []))].map(g => <option value={g} key={g}>{g}</option>)}
-      </select>
     </div>
   )
 }
