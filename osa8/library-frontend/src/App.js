@@ -27,11 +27,11 @@ const App = () => {
   return (
     <div>
       <div>
-        <button onClick={logout}>logout</button>
-        <button onClick={() => setPage('authors')}>authors</button>
+        <button onClick={logout} disabled={token === null}>logout</button>
+        <button onClick={() => setPage('authors')} >authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')} disabled={token === null}>add book</button>
-        <button onClick={() => setPage('login')}>log in</button>
+        <button onClick={() => setPage('login')}disabled={token !== null}>log in</button>
         <button onClick={() => setPage('recommend')} disabled={token === null}>recommend</button>
       </div>
 
