@@ -10,7 +10,7 @@ mutation EditAuthor($name: String!, $setBornTo: Int!) {
 }
 `
 const SetBirthyear = ({ names, show }) => {
-  const [name, setName] = useState('')
+  const [name, setName] = useState(names[0])
   const [year, setYear] = useState('')
   const [ setBirthYear ] = useMutation(SET_BIRTHYEAR)
 
