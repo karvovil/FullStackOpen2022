@@ -4,9 +4,21 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 import Recommend from './components/Recommend'
-import { useQuery, useApolloClient  } from '@apollo/client'
+import { useQuery, useApolloClient, gql, useSubscription  } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      title
+      author{
+        name
+      }
+      published
+      genres
+    }
+  }
+`
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
@@ -14,6 +26,13 @@ const App = () => {
   const authorResult = useQuery( ALL_AUTHORS, { pollInterval: 2000 } )
   const bookResult = useQuery( ALL_BOOKS, { variables: { genre: '', pollInterval: 2000 } } )
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData)
+      window.alert('new book added!')
+    }
+  })
 
   const logout = () => {
     setToken(null)
