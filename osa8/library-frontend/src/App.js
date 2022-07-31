@@ -19,6 +19,21 @@ export const BOOK_ADDED = gql`
     }
   }
 `
+export const updateCache = (cache, query, addedBook) => {
+  const uniqByTitle = (a) => {
+    console.log(a)
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
+    }
+  })
+}
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
@@ -30,7 +45,9 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
       console.log(subscriptionData)
+      const addedBook = subscriptionData.data.bookAdded
       window.alert('new book added!')
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
 
