@@ -1,8 +1,8 @@
-interface BmiValues {
+export interface BmiValues {
     height: number;
     weight: number;
   }
-  const parseBmiValues = (args: Array<string>): BmiValues => {
+  export const parseBmiValues = (args: Array<string>): BmiValues => {
     if (args.length < 4) throw new Error('Not enough arguments');
     if (args.length > 4) throw new Error('Too many arguments');
 
@@ -18,8 +18,9 @@ interface BmiValues {
         weight
     };
   }
-const calculateBmi = (values: BmiValues): string => {
+  export const calculateBmi = (values: BmiValues): string => {
     const bmi = values.weight/((values.height/100)*(values.height/100))
+    console.log(bmi)
     const bmidescription =
     bmi < 16 ? 'Underweight (Severe thinness)':
     bmi < 17 ? 'Underweight (Moderate thinness':
