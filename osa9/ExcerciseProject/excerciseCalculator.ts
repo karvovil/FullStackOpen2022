@@ -12,10 +12,10 @@ interface ExcerciseParameters {
     target: number,
   }
   const parseValues = (args: Array<string>): ExcerciseParameters => {
-    if (process.argv.length < 4) throw new Error('Not enough arguments');
-    if (isNaN(Number(process.argv[2]))) throw new Error('Provided target value was not number!');
-    const target: number = Number(process.argv[2]);
-    const hourStrings: Array<string> = process.argv.splice(3)
+    if (args.length < 4) throw new Error('Not enough arguments');
+    if (isNaN(Number(args[2]))) throw new Error('Provided target value was not number!');
+    const target: number = Number(args[2]);
+    const hourStrings: Array<string> = args.splice(3)
     const hours: Array<number> = hourStrings.map(n=>Number(n));
     if (hours.includes(NaN)) throw new Error('Invalid arguments');
     return {
