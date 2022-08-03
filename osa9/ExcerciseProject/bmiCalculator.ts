@@ -35,7 +35,7 @@ export const calculateBmi = (values: BmiValues): string => {
 try {
   console.log( calculateBmi( parseBmiValues(process.argv) ) );
 } catch (error: unknown) {
-  let errorMessage = 'Something went wrong.';
+  let errorMessage = 'Something went wrong with bmi calculator.';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }
