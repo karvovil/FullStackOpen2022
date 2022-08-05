@@ -17,6 +17,7 @@ const getPatients = (): NoSsnPatient[] => {
 const addPatient = (newPatient: NewPatient): Patient => {
   const id: string = uuid();
   const patientToSave: Patient = { ...newPatient, id };
+
   patients.push(patientToSave);
   return patientToSave;
 };
