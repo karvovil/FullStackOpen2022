@@ -32,13 +32,9 @@ const getPatients = (): NoSsnPatient[] => {
       })
     );
 };
-const getOnePatient = (id: string): NoSsnPatient => {
+const getOnePatient = (id: string): Patient => {
   const patient = patients.find(p => p.id === id);
-  const parsedPatient = parsePatient(patient);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const  { ssn, ...noSsnPatient } = parsedPatient;
-  return noSsnPatient;
-
+  return parsePatient(patient);
 };
 const addPatient = (newPatient: NewPatient): Patient => {
   const id: string = uuid();

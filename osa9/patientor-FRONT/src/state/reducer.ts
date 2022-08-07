@@ -9,6 +9,10 @@ export type Action =
   | {
       type: "ADD_PATIENT";
       payload: Patient;
+    }
+  | {
+      type: "UPDATE_PATIENT";
+      payload: Patient;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -32,6 +36,17 @@ export const reducer = (state: State, action: Action): State => {
           [action.payload.id]: action.payload
         }
       };
+    case "UPDATE_PATIENT":
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {[action.payload.id]: patient, ...lessPatients } = state.patients;
+      const newPatients = {
+        ...state,
+        patients: {
+          ...lessPatients,
+          [action.payload.id]: action.payload
+        }
+      };
+      return newPatients;
     default:
       return state;
   }
