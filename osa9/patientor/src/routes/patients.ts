@@ -6,6 +6,9 @@ const router = express.Router();
 router.get('/', (_req, res) => {
   res.send(patientService.getPatients());
 });
+router.get('/:id', (req, res) => {
+  res.send(patientService.getOnePatient(req.params.id));
+});
 
 router.post('/', (req, res) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -1,18 +1,44 @@
-import { NewPatient, NoSsnPatient, Patient } from '../types';
+import { Gender, NewPatient, NoSsnPatient, Patient } from '../types';
 import patientData from '../../data/patients.json';
 import { v1 as uuid } from 'uuid';
-const patients: Patient[] = patientData;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const parsePatient = (patient: any):Patient => {
+
+  if(!patient.entries){
+    patient.entries = [];
+  }
+  if(!patient.gender
+    || typeof patient.gender !== 'string'
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    || !Object.values(Gender).includes(patient.gender)){
+    patient.gender = Gender.Other;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return patient;
+};
+const patients: Patient[] = patientData.map(p => parsePatient(p) );
 
 const getPatients = (): NoSsnPatient[] => {
-  return patients.map(
-    ({ id, name, dateOfBirth, gender,occupation }) => ({
-      id,
-      name,
-      dateOfBirth,
-      gender,
-      occupation
-    })
-  );
+  return patients.map(p => parsePatient(p) )
+    .map(
+      ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+        id,
+        name,
+        dateOfBirth,
+        gender,
+        occupation,
+        entries
+      })
+    );
+};
+const getOnePatient = (id: string): NoSsnPatient => {
+  const patient = patients.find(p => p.id === id);
+  const parsedPatient = parsePatient(patient);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const  { ssn, ...noSsnPatient } = parsedPatient;
+  return noSsnPatient;
+
 };
 const addPatient = (newPatient: NewPatient): Patient => {
   const id: string = uuid();
@@ -24,5 +50,6 @@ const addPatient = (newPatient: NewPatient): Patient => {
 
 export default {
   getPatients,
+  getOnePatient,
   addPatient
 };
