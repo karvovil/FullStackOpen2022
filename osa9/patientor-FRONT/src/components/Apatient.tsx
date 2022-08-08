@@ -7,6 +7,7 @@ import axios from "axios";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import { updatePatient } from "../state/reducer";
 
 const Apatient = () => {
 
@@ -18,7 +19,7 @@ const Apatient = () => {
             if (!patients[id] || !patients[id].ssn){
                 const req = axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
                 req.then(res => {
-                    dispatch({ type: "UPDATE_PATIENT", payload: res.data });
+                    dispatch(updatePatient(res.data));
                 })
                 .catch(e => console.error(e));
             }
