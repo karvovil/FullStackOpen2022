@@ -1,17 +1,33 @@
-import { Gender, NewPatient, NoSsnPatient, Patient } from '../types';
-import patientData from '../../data/patients.json';
+import { Gender, NewPatient, NoSsnPatient, Patient, Entry } from '../types';
+import patientData from '../../data/patients';
 import { v1 as uuid } from 'uuid';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const parseEntry = (entry: any): Entry => {
+
+  const acceptedTypes = ['Hospital','OccupationalHealthcare','HealthCheck'];
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  if(!entry || typeof entry.type !== 'string' || !acceptedTypes.includes(entry.type) ){
+    throw new Error('shit entry');
+  }else{
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return entry;
+  }
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parsePatient = (patient: any):Patient => {
 
   if(!patient.entries){
     patient.entries = [];
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const parsedEntries: Entry[] = patient.entries.map((e: Entry) => parseEntry(e));
+  patient.entries = parsedEntries;
   if(!patient.gender
-    || typeof patient.gender !== 'string'
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    || !Object.values(Gender).includes(patient.gender)){
+  || typeof patient.gender !== 'string'
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  || !Object.values(Gender).includes(patient.gender)){
     patient.gender = Gender.Other;
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
