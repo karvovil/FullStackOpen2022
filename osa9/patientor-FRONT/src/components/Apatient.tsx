@@ -8,6 +8,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { updatePatient } from "../state/reducer";
+import AnEntry from "./AnEntry";
 
 const Apatient = () => {
 
@@ -37,6 +38,9 @@ const Apatient = () => {
         patients[id].gender === 'male' ? <MaleIcon/> 
         : patients[id].gender === 'female' ? <FemaleIcon/> 
         : <TransgenderIcon/>;
+    
+    const ents = patients[id].entries.map(e => <AnEntry key={e.id} entry={e}/>);
+    const entsHead = ents ? <h3>entries</h3> : null;
 
     return (
         <div>
@@ -44,7 +48,10 @@ const Apatient = () => {
                 {patients[id].name} {genderIcon}
             </h2>
                 ssn: {patients[id].ssn} <br/>
-                occupation: {patients[id].occupation}
+                occupation: {patients[id].occupation}<br/>
+                {entsHead}
+                {ents}
+                
         </div>
     );
 };

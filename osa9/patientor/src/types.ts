@@ -3,7 +3,6 @@ export type Diagnosis = {
     name: string,
     latin?: string,
 };
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface BaseEntry {
   id: string;
   description: string;
