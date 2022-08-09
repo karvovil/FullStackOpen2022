@@ -3,6 +3,7 @@ export type Diagnosis = {
     name: string,
     latin?: string,
 };
+
 interface BaseEntry {
   id: string;
   description: string;
@@ -32,7 +33,7 @@ interface OccupationalHealthcareEntry extends BaseEntry{
   }
 }
 interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: 'HealthCheck';
   healthCheckRating: HealthCheckRating;
 }
 export type Entry =
@@ -58,3 +59,12 @@ export interface Patient {
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 export type NoSsnPatient = Omit<Patient, 'ssn'>;
 export type NewPatient = Omit<Patient, 'id'>;
+
+type NewHospitalEntry = Omit<HospitalEntry, 'id'>;
+type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'id'>;
+type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;
+
+export type NewEntry =
+| NewHospitalEntry
+| NewOccupationalHealthcareEntry
+| NewHealthCheckEntry;
