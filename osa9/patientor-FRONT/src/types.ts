@@ -32,7 +32,7 @@ interface BaseEntry {
   specialist: string;
   diagnosisCodes?: Array<Diagnosis['code']>;
 }
-interface HospitalEntry extends BaseEntry{
+export interface HospitalEntry extends BaseEntry{
   type: 'Hospital'
   discharge: {
     date: string;
