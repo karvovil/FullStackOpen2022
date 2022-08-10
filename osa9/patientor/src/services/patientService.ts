@@ -54,7 +54,7 @@ const getOnePatient = (id: string): Patient => {
 };
 const addPatient = (newPatient: NewPatient): Patient => {
   const id: string = uuid();
-  const patientToSave: Patient = { ...newPatient, id };
+  const patientToSave: Patient = { ...newPatient, id, entries: [] };
   patients.push(patientToSave);
   return patientToSave;
 };

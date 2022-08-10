@@ -9,9 +9,9 @@ import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { updatePatient } from "../state/reducer";
 import AnEntry from "./AnEntry";
-import { EntryFormValues } from "../AddHospitalEntryModal/AddEntryForm";
+import { HospitalEntryFormValues } from "../AddHospitalEntryModal/AddHospitalEntryForm";
 import { Button } from "@material-ui/core";
-import AddEntryModal from "../AddHospitalEntryModal";
+import AddHospitalEntryModal from "../AddHospitalEntryModal";
 
 const Apatient = () => {
     
@@ -38,18 +38,19 @@ const Apatient = () => {
     setError(undefined);
   };
 
-  const submitNewEntry = async (values: EntryFormValues) => {
-      try {
-        if(!id){throw new Error('no id');}
-      const { data: newEntry } = await axios.post<HospitalEntry>(
-        `${apiBaseUrl}/patients/${id}/entries`,
-        values
-      );
-      const patient: Patient = patients[id];
-      const updatedEntries = patient.entries.concat(newEntry);
-      const updatedPatient = {...patient, entries: updatedEntries};
-      dispatch(updatePatient(updatedPatient));
-      closeModal();
+  
+  const submitNewEntry = async (values: HospitalEntryFormValues) => {
+    try {
+        if(!id){throw new Error('no patient id');}
+        const { data: newEntry } =
+            values.type === 'Hospital' 
+            ? await axios.post<HospitalEntry>(`${apiBaseUrl}/patients/${id}/entries`, values)
+            : await axios.post<HospitalEntry>(`${apiBaseUrl}/patients/${id}/entries`, values);
+
+        const updatedEntries = patients[id].entries.concat(newEntry);
+        const updatedPatient = {...patients[id], entries: updatedEntries};
+        dispatch(updatePatient(updatedPatient));
+        closeModal();
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         console.error(e?.response?.data || "Unrecognized axios error");
@@ -72,7 +73,9 @@ const Apatient = () => {
         : patients[id].gender === 'female' ? <FemaleIcon/> 
         : <TransgenderIcon/>;
     
-    const ents = patients[id].entries.map(e => <AnEntry key={e.id} entry={e}/>);
+    const ents = patients[id].entries
+        ? patients[id].entries.map(e => <AnEntry key={e.id} entry={e}/>)
+        : null;
     const entsHead = ents ? <h3>entries</h3> : null;
 
     return (
@@ -84,7 +87,7 @@ const Apatient = () => {
                 occupation: {patients[id].occupation}<br/>
                 {entsHead}
                 {ents}
-                <AddEntryModal
+                <AddHospitalEntryModal
                     modalOpen={modalOpen}
                     // eslint-disable-next-line @typescript-eslint/no-misused-promises
                     onSubmit={submitNewEntry}

@@ -7,14 +7,14 @@ import { HospitalEntry } from "../types";
 
 import { useStateValue } from "../state";
 
-export type EntryFormValues = Omit<HospitalEntry, "id" >;
+export type HospitalEntryFormValues = Omit<HospitalEntry, "id" >;
 
 interface Props {
-  onSubmit: (values: EntryFormValues) => void;
+  onSubmit: (values: HospitalEntryFormValues) => void;
   onCancel: () => void;
 }
 
-export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
+export const AddHospitalEntryForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
   return (
     <Formik
@@ -41,14 +41,11 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
-        if ( !values.discharge ) {
-          errors.discharge = requiredError;
-        }
         if ( !values.discharge.date ) {
-          errors.dischargeDate = requiredError;
+          errors['discharge.date'] = requiredError;
         }
         if ( !values.discharge.criteria ) {
-          errors.dischargeCriteria = requiredError;
+          errors['discharge.criteria'] = requiredError;
         }
         return errors;
       }}
@@ -123,4 +120,4 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   );
 };
 
-export default AddEntryForm;
+export default AddHospitalEntryForm;
