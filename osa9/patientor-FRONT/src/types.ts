@@ -47,7 +47,7 @@ interface OccupationalHealthcareEntry extends BaseEntry{
     endDate: string;
   }
 }
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }

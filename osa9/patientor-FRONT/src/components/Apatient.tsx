@@ -2,22 +2,24 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
-import { HospitalEntry, Patient } from "../types";
+import { HealthCheckEntry, HospitalEntry, Patient } from "../types";
 import axios from "axios";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { updatePatient } from "../state/reducer";
 import AnEntry from "./AnEntry";
-import { HospitalEntryFormValues } from "../AddHospitalEntryModal/AddHospitalEntryForm";
+import { HospitalEntryFormValues } from "../AddEntryModal/AddHospitalEntryForm";
 import { Button } from "@material-ui/core";
-import AddHospitalEntryModal from "../AddHospitalEntryModal";
+import {AddHospitalEntryModal, AddHealthCheckEntryModal} from "../AddEntryModal";
+import { HealthCheckEntryFormValues } from "../AddEntryModal/AddHealthCheckEntryForm";
 
 const Apatient = () => {
     
     const [{ patients }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
-    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [hospitalModalOpen, setHospitalModalOpen] = React.useState<boolean>(false);
+    const [healthCheckModalOpen, setHealthCheckModalOpen] = React.useState<boolean>(false);
     const [error, setError] = React.useState<string>();
     
     React.useEffect(() => {
@@ -32,25 +34,31 @@ const Apatient = () => {
         }
     }, []);
 
-  const openModal = (): void => setModalOpen(true);
-  const closeModal = (): void => {
-    setModalOpen(false);
+  const openHospitalModal = (): void => setHospitalModalOpen(true);
+  const openHealthCheckModal = (): void => setHealthCheckModalOpen(true);
+  const closeHospitalModal = (): void => {
+    setHospitalModalOpen(false);
+    setError(undefined);
+  };
+  const closeHealthCheckModal = (): void => {
+    setHealthCheckModalOpen(false);
     setError(undefined);
   };
 
   
-  const submitNewEntry = async (values: HospitalEntryFormValues) => {
+  const submitNewEntry = async (values: HospitalEntryFormValues | HealthCheckEntryFormValues) => {
     try {
         if(!id){throw new Error('no patient id');}
         const { data: newEntry } =
             values.type === 'Hospital' 
             ? await axios.post<HospitalEntry>(`${apiBaseUrl}/patients/${id}/entries`, values)
-            : await axios.post<HospitalEntry>(`${apiBaseUrl}/patients/${id}/entries`, values);
+            : await axios.post<HealthCheckEntry>(`${apiBaseUrl}/patients/${id}/entries`, values);
 
         const updatedEntries = patients[id].entries.concat(newEntry);
         const updatedPatient = {...patients[id], entries: updatedEntries};
         dispatch(updatePatient(updatedPatient));
-        closeModal();
+        closeHospitalModal();
+        closeHealthCheckModal();////check
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         console.error(e?.response?.data || "Unrecognized axios error");
@@ -88,14 +96,24 @@ const Apatient = () => {
                 {entsHead}
                 {ents}
                 <AddHospitalEntryModal
-                    modalOpen={modalOpen}
+                    modalOpen={hospitalModalOpen}
                     // eslint-disable-next-line @typescript-eslint/no-misused-promises
                     onSubmit={submitNewEntry}
                     error={error}
-                    onClose={closeModal}
+                    onClose={closeHospitalModal}
                 />
-                <Button variant="contained" onClick={() => openModal()}>
+                <Button variant="contained" onClick={() => openHospitalModal()}>
                 Add New Hospital Entry
+                </Button>
+                <AddHealthCheckEntryModal
+                    modalOpen={healthCheckModalOpen}
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    onSubmit={submitNewEntry}
+                    error={error}
+                    onClose={closeHealthCheckModal}
+                />
+                <Button variant="contained" onClick={() => openHealthCheckModal()}>
+                Add New HealthCheck Entry
                 </Button>
         </div>
     );
