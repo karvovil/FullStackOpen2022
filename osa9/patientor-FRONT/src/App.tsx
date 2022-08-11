@@ -5,8 +5,8 @@ import { Button, Divider, Container } from "@material-ui/core";
 
 import { apiBaseUrl } from "./constants";
 import { useStateValue } from "./state";
-import { Patient } from "./types";
-import { setPatientList } from "./state/reducer";
+import { Diagnosis, Patient } from "./types";
+import { setDiagnosesList, setPatientList } from "./state/reducer";
 
 import PatientListPage from "./PatientListPage";
 import { Typography } from "@material-ui/core";
@@ -31,6 +31,14 @@ const App = () => {
     void fetchPatientList();
   }, [dispatch]);
 
+  React.useEffect(() => {
+        console.log('fetching diagnoses');
+        const req = axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+        req.then(res => {
+            dispatch(setDiagnosesList(res.data));
+        })
+        .catch(e => console.error(e));
+}, []);
   return (
     <div className="App">
       <Router>

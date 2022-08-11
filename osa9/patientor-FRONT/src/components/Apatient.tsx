@@ -58,7 +58,7 @@ const Apatient = () => {
         const updatedPatient = {...patients[id], entries: updatedEntries};
         dispatch(updatePatient(updatedPatient));
         closeHospitalModal();
-        closeHealthCheckModal();////check
+        closeHealthCheckModal();
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         console.error(e?.response?.data || "Unrecognized axios error");

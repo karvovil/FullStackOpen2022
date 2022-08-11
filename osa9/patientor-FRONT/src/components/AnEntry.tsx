@@ -1,8 +1,5 @@
 import React from "react";
-import { Entry, Diagnosis } from "../types";
-import { apiBaseUrl } from "../constants";
-import axios from "axios";
-import { setDiagnosesList } from "../state";
+import { Entry } from "../types";
 import { useStateValue } from "../state";
 import HospitalEntryDetails from "./HospitalEntryDetails";
 import OccupationalHealthcareEntryDetails from "./OccupationalHealthcareEntryDetails";
@@ -12,18 +9,8 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import WorkIcon from '@mui/icons-material/Work';
 
 const AnEntry = ({entry}:{entry: Entry}) => {
-    const [{ diagnoses }, dispatch] = useStateValue();
+    const [{ diagnoses }] = useStateValue();
 
-    React.useEffect(() => {
-        if(Object.keys(diagnoses).length === 0){
-            console.log('fetching diagnoses');
-            const req = axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
-            req.then(res => {
-                dispatch(setDiagnosesList(res.data));
-            })
-            .catch(e => console.error(e));
-        }
-    }, []);
     const assertNever = (value: never): never => {
         throw new Error(
           `Unhandled discriminated union member: ${JSON.stringify(value)}`
