@@ -2,35 +2,28 @@ import { Gender, NewPatient, NoSsnPatient, Patient, Entry, NewEntry } from '../t
 import patientData from '../../data/patients';
 import { v1 as uuid } from 'uuid';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const validateEntry = (entry: any): Entry => {
+const acceptedEntryTypes = ['Hospital','OccupationalHealthcare','HealthCheck'];
 
-  const acceptedTypes = ['Hospital','OccupationalHealthcare','HealthCheck'];
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  if(!entry || typeof entry.type !== 'string' || !acceptedTypes.includes(entry.type) ){
+const validateEntry = (entry: Entry): Entry => {
+
+  if(!entry || typeof entry.type !== 'string' || !acceptedEntryTypes.includes(entry.type) ){
     throw new Error('shit entry');
   }else{
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return entry;
   }
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const validatePatient = (patient: any):Patient => {
+const validatePatient = (patient: Patient): Patient => {
 
   if(!patient.entries){
     patient.entries = [];
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const parsedEntries: Entry[] = patient.entries.map((e: Entry) => validateEntry(e));
   patient.entries = parsedEntries;
   if(!patient.gender
   || typeof patient.gender !== 'string'
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   || !Object.values(Gender).includes(patient.gender)){
     patient.gender = Gender.Other;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return patient;
 };
 const patients: Patient[] = patientData.map(p => validatePatient(p) );
@@ -48,9 +41,12 @@ const getPatients = (): NoSsnPatient[] => {
       })
     );
 };
-const getOnePatient = (id: string): Patient => {
+const getOnePatient = (id: string): Patient | undefined => {
   const patient = patients.find(p => p.id === id);
-  return validatePatient(patient);
+  if(patient){
+    return validatePatient(patient);
+  }
+  return undefined;
 };
 const addPatient = (newPatient: NewPatient): Patient => {
   const id: string = uuid();
@@ -58,14 +54,12 @@ const addPatient = (newPatient: NewPatient): Patient => {
   patients.push(patientToSave);
   return patientToSave;
 };
-
-
-const validateNewEntry = (newEntry: NewEntry): Entry => {
+const validateNewEntry = (newEntry: NewEntry): boolean => {
   if(!newEntry.description || !newEntry.date || !newEntry.specialist){
     throw new Error('shit entry');
   }
   if(!newEntry || typeof newEntry.type !== 'string'
-  || !['Hospital','OccupationalHealthcare','HealthCheck'].includes(newEntry.type) ){
+  || !acceptedEntryTypes.includes(newEntry.type) ){
     throw new Error('shit entry type');
   }
   switch (newEntry.type) {
@@ -81,18 +75,23 @@ const validateNewEntry = (newEntry: NewEntry): Entry => {
   default:
     throw new Error('shit entry');
   }
-  const entryId: string = uuid();
-  const entry:Entry = { ...newEntry, id: entryId };
-  return entry;
+  return true;
 };
-const addEntry = (id: string, newEntry: NewEntry): Entry => {
-
-  const entryToSave: Entry = validateNewEntry(newEntry);
-  const patient = patients.find( p => p.id === id);
-  if(patient){
-    patient.entries.push(entryToSave);
+const addEntry = (patientId: string, newEntry: NewEntry): Entry | undefined => {
+  try{
+    if(validateNewEntry(newEntry)){
+      const entryId: string = uuid();
+      const entryToSave: Entry = { ...newEntry, id: entryId };
+      const patient = patients.find( p => p.id === patientId);
+      if(patient){
+        patient.entries.push(entryToSave);
+        return entryToSave;
+      }
+    }
+  }catch(e){
+    return undefined;
   }
-  return entryToSave;
+  return undefined;
 };
 
 export default {
